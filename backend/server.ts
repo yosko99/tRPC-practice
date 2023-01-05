@@ -5,20 +5,16 @@ import {
 
 import cors from 'cors';
 import express from 'express';
-import { initTRPC } from '@trpc/server';
 import * as trpcExpress from '@trpc/server/adapters/express';
-
-const t = initTRPC.create();
-
-export const appRouter = t.router({
-  hello: t.procedure.query(() => {
-    return 'hello!';
-  }),
-});
+import { appRouter } from './appRouter';
 
 require('dotenv').config();
 
 const app = express();
+
+app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.use(
   '/trpc',
@@ -26,10 +22,6 @@ app.use(
     router: appRouter,
   })
 );
-
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
